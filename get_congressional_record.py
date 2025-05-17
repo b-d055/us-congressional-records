@@ -110,7 +110,7 @@ def fetch_text_from_url(url):
 
 def fetch_and_compile_articles(volume, issue, api_key, force_override=False):
     """
-    Fetches and compiles articles for a given volume and issue, and writes them to a file.
+    Fetches and compiles articles for a given volume and issue, and writes them to files.
 
     Args:
         volume (str): The volume number of the Congressional Record.
@@ -122,24 +122,25 @@ def fetch_and_compile_articles(volume, issue, api_key, force_override=False):
         None
     """
     print(f"Fetching articles for Volume {volume}, Issue {issue}...")
-    directory = f'congressional_records_{volume}'
+    directory = f'congressional_records_{volume}/issue_{issue}'
     os.makedirs(directory, exist_ok=True)
-    file_path = os.path.join(directory, f'congressional_record_{volume}_{issue}.txt')
-    
-    # Check if the file already exists and if force_override is not set
-    if os.path.exists(file_path) and not force_override:
-        print(f"File {file_path} already exists. Skipping...")
-        return
     
     data = fetch_articles(volume, issue, api_key)
     if data and data.get("articles"):
-        with open(file_path, 'w') as f:
-            f.write(f"Congressional Record Volume {volume}, Issue {issue}\n")
-            urls = extract_formatted_text_urls(data)
+        urls = extract_formatted_text_urls(data)
+        
+        for url in urls:
+            file_name = url.split('/')[-1].replace('.htm', '.txt')
+            file_path = os.path.join(directory, file_name)
             
-            for url in urls:
-                text_content = fetch_text_from_url(url)
-                if text_content:
+            # Check if the file already exists and if force_override is not set
+            if os.path.exists(file_path) and not force_override:
+                print(f"File {file_path} already exists. Skipping...")
+                continue
+            
+            text_content = fetch_text_from_url(url)
+            if text_content:
+                with open(file_path, 'w') as f:
                     f.write(text_content)
                     f.write("\n\n")
     else:

@@ -1,8 +1,8 @@
 # US Congressional Records
 
-## Motivation
+## Overview
 
-This project aims to efficiently download entire volumes of US Congressional Records from the congress.gov API. The records are fetched, compiled, and saved as text files for easy access and analysis.
+This project provides a tool to efficiently download entire volumes of US Congressional Records from the congress.gov API. The records are fetched, compiled, and saved as text files for easy access and analysis.
 
 ## Usage
 
@@ -36,10 +36,10 @@ To force override existing files:
 python get_congressional_record.py 165 your_api_key_here --force-override
 ```
 
-### Note
+### Notes
 
-There are rate limits on the congress.gov API endpoint, hence the retries in the script. It may take a while to download an entire volume, especially if there are many issues and articles.
+- There are rate limits on the congress.gov API endpoint. The script includes automatic retry logic with exponential backoff.
+- Downloading an entire volume may take considerable time depending on the number of issues and articles.
+- The script uses concurrent execution to speed up downloads where possible.
+- Articles are saved as separate text files in directories organized by volume and issue number.
 
-### Available Data
-
-The 2024 volume (Volume 170) has already been pulled in its entirety and is available in the `congressional_records_170` directory.
